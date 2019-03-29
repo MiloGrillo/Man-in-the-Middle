@@ -1,12 +1,13 @@
 from scapy.all import *
 import time
-import nmap
 
 # IP forwarding must be enabled.
 class PrePreAttack(object):	
 	def get_IP_Addrs(self, routerIP):
-		ans, unans = arping("192.168.56.*") #check the IP address here, may be incorrect
-		n = len(ans)
+        num_Array = routerIP.split('.')
+        arp_List = ".".join(num_Array[0:3])+".*" #this is to get the string in form "X.X.X.*"
+		ans, unans = arping(arp_List)
+        n = len(ans)
 		IP_Addrs = []
 		for i in range(0, n):
 			IP_Addrs.append(ans[i][1].psrc)
@@ -49,9 +50,9 @@ if __name__ == '__main__':
 	from scapy.all import *
 #	interface = #interface
 #	my_macs = get_if_hwaddr(interface)
-	IP_router = sr1(IP(dst = "www.wikipedia.org", ttl = 0)/ICMP()/"XXXXXXXXXXX")
+	IP_router = sr1(IP(dst = "www.wikipedia.org", ttl = 0)/ICMP()) #ttl = 0 to find the router with whom we connected
 	print(IP_router.src)
-	targets_IP = PrePreAttack().get_IP_Addrs(IP_router)
+	targets_IP = PrePreAttack().get_IP_Addrs(IP_router.src)
 	print(targets_IP[0])
 	targets_MAC = []
 #	try:
