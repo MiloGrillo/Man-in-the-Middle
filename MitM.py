@@ -2,6 +2,7 @@
 
 from scapy.all import *
 import time
+import matplotlib.pyplot as plt
 
 class Victim():
 	def __init__(self, IPaddress):
@@ -20,6 +21,14 @@ class Victim():
 				website.visit()
 				return	
 		self.websites.append(Website(domain))
+		
+	def make_Graph(self):
+		plt.figure()
+		domains = [self.websites[i].get_domain for i in range(0, len(self.websites))]
+		num_Visits = [self.websites[i].visits for i in range(0, len(self.websites))]
+		plt.barh(domains, num_Visits) #plots a horizontal bar plot
+		plt.suptitle("Websites visited by "+ self.IPaddress)
+		plt.show()
 
 class Website():
 	def __init__(self, domain):
@@ -86,7 +95,7 @@ class track_traffic():
 		
 		for i in range (0, len(targets)):
 			if self.targets[i].get_IP == src:
-				self.targets[i].visit(socket.gethostbyaddr(dest))
+				self.targets[i].visit(socket.gethostbyaddr(dest)) #what does .gethostbyaddr return if there is no "name" like google available?
 				return
 			if self.targets[i].get_IP == dest:
 				self.targets[i].visit(socket.gethostbyaddr(src))
@@ -121,4 +130,8 @@ if __name__ == '__main__':
 				print("[Failed to send ARP-Poison]")
 	except KeyboardInterrupt:
 		print("[KeyBoard Interrupt]")
+		if targets != null:
+			print("[Making Graphs]")
+			for i in range(0, len(targets)):
+				 targets[i].make_Graph()
 		print("[Shutting down]")
