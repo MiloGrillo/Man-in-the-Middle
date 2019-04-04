@@ -61,7 +61,7 @@ class PreAttack(object):
 		self.target = target
 		self.interface = interface
 	def get_MAC_Addr(self):
-		return srp(Ether(dst="ff:ff:ff:ff:ff:ff')/ARP(pdst=self.target),timeout=10, iface=self.interface)[0][0][1][ARP].hwsrc
+		return srp(Ether(dst="ff:ff:ff:ff:ff:ff')/ARP(pdst=self.target.IP),timeout=10, iface=self.interface)[0][0][1][ARP].hwsrc
 
 class Attack(object):
 	def __init__(self, routerip, routermac, targets, interface):
