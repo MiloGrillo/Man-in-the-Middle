@@ -2,6 +2,7 @@
 
 from scapy.all import *
 import time
+import socket
 import matplotlib.pyplot as plt
 
 class Victim():
