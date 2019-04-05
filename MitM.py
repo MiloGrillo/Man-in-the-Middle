@@ -100,10 +100,10 @@ class PostAttack():
 		
 		for i in range (0, len(self.targets)):
 			if self.targets[i].get_IP == src:
-				self.targets[i].visit(socket.gethostbyaddr(dest)) #what does .gethostbyaddr return if there is no "name" like google available?
+				self.targets[i].visit_website(socket.gethostbyaddr(dest)) #what does .gethostbyaddr return if there is no "name" like google available?
 				return
 			if self.targets[i].get_IP == dest:
-				self.targets[i].visit(socket.gethostbyaddr(src))
+				self.targets[i].visit_website(socket.gethostbyaddr(src))
 				return
 		return
 				 
